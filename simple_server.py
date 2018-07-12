@@ -38,37 +38,38 @@ net = caffe.Classifier(deploy_path,
 @app.route('/upload', methods=["GET","POST","OPTIONS"])
 def receive():
 # try:
-    print( request.json, request.args, request.files)
-    # files = list(request.files.values())
-    # input_image = files[0]
-    # im = caffe.io.load_image(input_image.stream)
+    if request.method == 'POST':
+        print( request.json, request.args, request.files)
+        # files = list(request.files.values())
+        # input_image = files[0]
+        # im = caffe.io.load_image(input_image.stream)
 
-    file = request.files['photo']
-    im = Image.open(file.stream)
-    #assuming only one file is sent
+        file = request.files['photo']
+        im = Image.open(file.stream)
+        #assuming only one file is sent
 
-    # print( request.files)
-    # print( input_image)
-    # img_filename = "temp.jpg"
+        # print( request.files)
+        # print( input_image)
+        # img_filename = "temp.jpg"
 
-    #im = Image.open(input_image.stream)
-    #im.save(img_filename, 'JPG')
-    # input_image.save(img_filename)
+        #im = Image.open(input_image.stream)
+        #im.save(img_filename, 'JPG')
+        # input_image.save(img_filename)
 
-    # Load image
-    # im = caffe.io.load_image(image_path)
+        # Load image
+        # im = caffe.io.load_image(image_path)
 
-    # Make a forward pass and get the score
-    prediction = net.predict([im], oversample=False)
+        # Make a forward pass and get the score
+        prediction = net.predict([im], oversample=False)
 
-    
-    print prediction[0].argmax()
-    if prediction[0].argmax() == 1:
-       result = 'Postive'
-    else:
-       result = 'Negative'
 
-    dic = {'sentiment': result}
+        print prediction[0].argmax()
+        if prediction[0].argmax() == 1:
+           result = 'Postive'
+        else:
+           result = 'Negative'
+
+        dic = {'sentiment': result}
 
     # command = CMD_TEMPLATE.format( image_filename=img_filename)
 
