@@ -35,11 +35,11 @@ net = caffe.Classifier(deploy_path,
                            raw_scale=255)
 
 
-@app.route('/', methods=["GET","POST","OPTIONS"])
+@app.route('/upload', methods=["GET","POST"])
 def receive():
 # try:
 #     if request.method == 'POST':
-        print( request.json, request.args, request.files)
+        print(request.json, request.args, request.files)
         # files = list(request.files.values())
         # input_image = files[0]
         # im = caffe.io.load_image(input_image.stream)
@@ -54,8 +54,11 @@ def receive():
         filename = str(uuid.uuid4()) + ".jpeg"
         im.save(filename)
 
-        file = request.files['photo']
-        im = Image.open(file.stream)
+        with open(filename, "rb") as imagefile:
+            prediction = net.predict(imagefile.read(), oversample=False)
+
+        #file = request.files['photo']
+        #im = Image.open(file.stream)
         #assuming only one file is sent
 
         # print( request.files)
@@ -70,7 +73,7 @@ def receive():
         # im = caffe.io.load_image(image_path)
 
         # Make a forward pass and get the score
-        prediction = net.predict([im], oversample=False)
+        # prediction = net.predict([im], oversample=False)
 
 
         print prediction[0].argmax()
