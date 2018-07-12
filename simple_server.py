@@ -35,14 +35,24 @@ net = caffe.Classifier(deploy_path,
                            raw_scale=255)
 
 
-@app.route('/upload', methods=["GET","POST","OPTIONS"])
+@app.route('/', methods=["GET","POST","OPTIONS"])
 def receive():
 # try:
-    if request.method == 'POST':
+#     if request.method == 'POST':
         print( request.json, request.args, request.files)
         # files = list(request.files.values())
         # input_image = files[0]
         # im = caffe.io.load_image(input_image.stream)
+
+        args = request.get_json()
+
+        image_str = args["image"]
+
+        image_data = re.sub('^data:image/.+;base64,', '', image_str)
+        im = Image.open(BytesIO(base64.b64decode(image_data)))
+        # image_data = decodestring(imagestr)
+        filename = str(uuid.uuid4()) + ".jpeg"
+        im.save(filename)
 
         file = request.files['photo']
         im = Image.open(file.stream)
@@ -71,12 +81,12 @@ def receive():
 
         dic = {'sentiment': result}
 
-    # command = CMD_TEMPLATE.format( image_filename=img_filename)
+        # command = CMD_TEMPLATE.format( image_filename=img_filename)
 
-    # print(command)
-    # captioner_return = check_output(command, shell=True)
+        # print(command)
+        # captioner_return = check_output(command, shell=True)
 
-    return jsonify(dic)
+        return jsonify(dic)
 #except:
 #   return ""
 
