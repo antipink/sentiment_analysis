@@ -39,13 +39,18 @@ net = caffe.Classifier(deploy_path,
 def receive():
 # try:
     print( request.json, request.args, request.files)
-    files = list( request.files.values())
+    # files = list(request.files.values())
+    # input_image = files[0]
+    # im = caffe.io.load_image(input_image.stream)
+
+    file = request.files['photo']
+    im = Image.open(file.stream)
     #assuming only one file is sent
-    input_image = files[0]
+
     # print( request.files)
     # print( input_image)
-    img_filename = "temp.jpg"
-    im = caffe.io.load_image(input_image.stream)
+    # img_filename = "temp.jpg"
+
     #im = Image.open(input_image.stream)
     #im.save(img_filename, 'JPG')
     # input_image.save(img_filename)
