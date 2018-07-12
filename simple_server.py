@@ -5,6 +5,11 @@ from subprocess import check_output
 import caffe
 import cv2
 import numpy as np
+from io import BytesIO
+import re
+import base64
+from PIL import Image
+import uuid
 
 app = Flask(__name__)
 app.debug = True
@@ -51,11 +56,14 @@ def receive():
         image_data = re.sub('^data:image/.+;base64,', '', image_str)
         im = Image.open(BytesIO(base64.b64decode(image_data)))
         # image_data = decodestring(imagestr)
-        filename = str(uuid.uuid4()) + ".jpeg"
+        filename = str(uuid.uuid4()) + ".jpg"
         im.save(filename)
 
-        with open(filename, "rb") as imagefile:
-            prediction = net.predict(imagefile.read(), oversample=False)
+        # with open(filename, "rb") as imagefile: 
+        print(filename)
+        im = caffe.io.load_image(filename)
+            #im = Image.open(imagefile)
+        prediction = net.predict([im], oversample=False)
 
         #file = request.files['photo']
         #im = Image.open(file.stream)
